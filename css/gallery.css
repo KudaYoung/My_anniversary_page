@@ -151,7 +151,7 @@ h1 {
 }
 
 .lightbox-nav {
-    position: absolute;
+    position: fixed; /* 改为fixed定位，固定在视口 */
     top: 50%;
     transform: translateY(-50%);
     width: 60px;
@@ -169,16 +169,29 @@ h1 {
     z-index: 1001;
 }
 
-.lightbox-nav:hover {
-    background: rgba(0, 0, 0, 0.8);
-}
-
 .lightbox-prev {
-    left: 30px;
+    left: 30px; /* 距离左侧固定距离 */
 }
 
 .lightbox-next {
-    right: 30px;
+    right: 30px; /* 距离右侧固定距离 */
+}
+
+/* 响应式设计调整 */
+@media (max-width: 768px) {
+    .lightbox-nav {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    .lightbox-prev {
+        left: 10px; /* 移动端调整距离 */
+    }
+    
+    .lightbox-next {
+        right: 10px; /* 移动端调整距离 */
+    }
 }
 
 .lightbox-counter {
