@@ -138,8 +138,8 @@ function initLightbox() {
     const lightboxDescription = document.getElementById('lightboxDescription');
     
     let currentIndex = 0;
-    let isImageLoading = false;
-    
+    let currentLoadIndex = null;
+
     // 打开灯箱
     function openLightbox(index) {
         currentIndex = index;
@@ -147,18 +147,21 @@ function initLightbox() {
         lightbox.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
-    
+
     // 关闭灯箱
     function closeLightbox() {
         lightbox.classList.remove('active');
         document.body.style.overflow = 'auto';
+        currentLoadIndex = null;
     }
-    
+
     // 更新灯箱内容
     function updateLightbox() {
         const photo = photos[currentIndex];
+        const loadIndex = currentIndex;
+        currentLoadIndex = loadIndex;
         
-        // 直接显示预览图
+        // 立即显示预览图
         lightboxImg.src = photo.thumb || photo.src;
         lightboxImg.alt = photo.title;
         lightboxCounter.textContent = `${currentIndex + 1} / ${photos.length}`;
@@ -166,40 +169,37 @@ function initLightbox() {
         
         // 检查原图是否已缓存
         if (imageCache.has(photo.src)) {
-            // 如果已缓存，直接替换
-            lightboxImg.src = photo.src;
+            // 如果已缓存，直接替换为原图
+            if (currentLoadIndex === loadIndex) {
+                lightboxImg.src = photo.src;
+            }
         } else {
             // 如果没有缓存，异步加载原图
-            isImageLoading = true;
             preloadImage(photo.src)
                 .then(() => {
-                    if (currentIndex === index) { // 确保仍然是当前图片
+                    // 确保当前显示的仍然是同一张图片
+                    if (currentLoadIndex === loadIndex) {
                         lightboxImg.src = photo.src;
                     }
                 })
                 .catch(() => {
                     console.warn(`Failed to load full image: ${photo.src}`);
-                })
-                .finally(() => {
-                    isImageLoading = false;
                 });
         }
     }
-    
+
     // 上一张
     function prevPhoto() {
-        if (isImageLoading) return;
         currentIndex = (currentIndex - 1 + photos.length) % photos.length;
         updateLightbox();
     }
-    
+
     // 下一张
     function nextPhoto() {
-        if (isImageLoading) return;
         currentIndex = (currentIndex + 1) % photos.length;
         updateLightbox();
     }
-    
+
     // 点击图片打开灯箱
     document.addEventListener('click', (e) => {
         if (e.target.closest('.photo-item')) {
@@ -208,19 +208,19 @@ function initLightbox() {
             openLightbox(index);
         }
     });
-    
+
     // 事件监听
     lightboxClose.addEventListener('click', closeLightbox);
     lightboxPrev.addEventListener('click', prevPhoto);
     lightboxNext.addEventListener('click', nextPhoto);
-    
+
     // 点击灯箱背景关闭
     lightbox.addEventListener('click', (e) => {
         if (e.target === lightbox) {
             closeLightbox();
         }
     });
-    
+
     // 键盘导航
     document.addEventListener('keydown', (e) => {
         if (!lightbox.classList.contains('active')) return;
