@@ -52,22 +52,67 @@ function updateDaysCounter() {
     daysCounter.textContent = days + ' 天';
 }
 
+// 获取年份期待文字
+function getYearExpectationText(year) {
+    const currentYear = new Date().getFullYear();
+    const yearDiff = year - currentYear;
+    
+    if (yearDiff === 0) {
+        return '期待今年的纪念照片';
+    } else if (yearDiff === 1) {
+        return '期待明年的纪念照片';
+    } else {
+        return `期待${year}年的纪念照片`;
+    }
+}
+
+// 获取所有需要显示的年份
+function getAllYearsToDisplay() {
+    const currentYear = new Date().getFullYear();
+    const startYear = 2024;
+    
+    // 获取照片中所有的年份
+    const photoYears = photos.map(photo => photo.year);
+    // 获取从开始年份到当前年份的所有年份
+    const yearRange = [];
+    for (let year = startYear; year <= currentYear; year++) {
+        yearRange.push(year);
+    }
+    
+    // 添加最后一张照片的下一年（如果存在照片）
+    if (photoYears.length > 0) {
+        const maxPhotoYear = Math.max(...photoYears);
+        const nextYear = maxPhotoYear + 1;
+        photoYears.push(nextYear);
+    }
+    
+    // 合并两个数组并去重，然后排序
+    const allYears = [...new Set([...yearRange, ...photoYears])].sort();
+    
+    return allYears;
+}
+
 // 生成时间轴
 async function generateTimeline() {
     const timeline = document.getElementById('timeline');
     timeline.innerHTML = ''; // 清空现有内容
     
-    const currentYear = new Date().getFullYear();
-    const startYear = 2024;
+    // 获取所有需要显示的年份
+    const yearsToDisplay = getAllYearsToDisplay();
+    
+    if (yearsToDisplay.length === 0) {
+        timeline.innerHTML = '<p style="text-align: center; color: #b0c4de; padding: 40px;">暂无时间轴数据</p>';
+        return;
+    }
     
     // 预加载所有图片
     const preloadPromises = photos.map(photo => preloadImage(photo.image));
     await Promise.allSettled(preloadPromises);
     
-    // 从2024年开始生成时间轴项目
-    for (let year = startYear; year <= currentYear; year++) {
+    // 生成时间轴项目
+    yearsToDisplay.forEach((year, index) => {
         const photo = photos.find(p => p.year === year);
-        const isEven = (year - startYear) % 2 === 0;
+        const isEven = index % 2 === 0;
         
         const timelineItem = document.createElement('div');
         timelineItem.className = `timeline-item ${isEven ? 'even' : 'odd'}`;
@@ -92,35 +137,34 @@ async function generateTimeline() {
                 <div class="timeline-content">
                     <h3 class="timeline-year">${year}年</h3>
                     <p class="timeline-date">2024年5月3日</p>
-                    <div class="timeline-placeholder">
-                        <svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#f0f0f0"/>
-                            <text x="50%" y="50%" font-size="14" text-anchor="middle" dy="0.35em" fill="#999">纪念照片加载中...</text>
-                        </svg>
-                    </div>
                     <p class="timeline-description">我们的故事从这里开始...</p>
                 </div>
             `;
         } else {
-            // 未来年份（还没有照片）
+            // 其他年份（没有照片）
+            const currentYear = new Date().getFullYear();
+            let description = '';
+            
+            if (year <= currentYear) {
+                // 过去年份但没有照片
+                description = '这一年我们也有很多美好回忆';
+            } else {
+                // 未来年份
+                description = getYearExpectationText(year);
+            }
+            
             content = `
                 <div class="timeline-content">
                     <h3 class="timeline-year">${year}年</h3>
                     <p class="timeline-date">${year}年5月3日</p>
-                    <div class="timeline-placeholder">
-                        <svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="100%" height="100%" fill="#f0f0f0"/>
-                            <text x="50%" y="50%" font-size="14" text-anchor="middle" dy="0.35em" fill="#999">期待今年的纪念照片</text>
-                        </svg>
-                    </div>
-                    <p class="timeline-description">期待今年的纪念照片...</p>
+                    <p class="timeline-description">${description}</p>
                 </div>
             `;
         }
         
         timelineItem.innerHTML = content + '<div class="timeline-marker"></div>';
         timeline.appendChild(timelineItem);
-    }
+    });
 }
 
 // 添加图片加载错误处理
