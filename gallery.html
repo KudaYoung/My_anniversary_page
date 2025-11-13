@@ -103,13 +103,36 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
+        }
+        
+        .lightbox-img-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .lightbox-img {
             max-width: 100%;
-            max-height: 90vh;
+            max-height: 80vh;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: opacity 0.3s;
+        }
+        
+        .lightbox-img.loading {
+            opacity: 0.7;
+        }
+        
+        .lightbox-description {
+            margin-top: 15px;
+            text-align: center;
+            max-width: 600px;
+            padding: 0 20px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #e0e0e0;
         }
         
         .lightbox-close {
@@ -167,12 +190,27 @@
         
         .lightbox-counter {
             position: absolute;
-            bottom: 20px;
+            top: 20px;
             left: 0;
             right: 0;
             text-align: center;
             color: white;
             font-size: 1.2rem;
+        }
+        
+        .loading-spinner {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            z-index: 1002;
         }
         
         footer {
@@ -223,17 +261,11 @@
             h1 {
                 font-size: 2rem;
             }
-        }
-        
-        /* 加载动画 */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
+            
+            .lightbox-description {
+                font-size: 1rem;
+                padding: 0 10px;
+            }
         }
         
         @keyframes spin {
@@ -244,7 +276,6 @@
         .compressed-img {
             max-width: 100%;
             height: auto;
-            /* 添加模糊效果作为占位符，直到图片加载完成 */
             filter: blur(5px);
             transition: filter 0.5s;
         }
@@ -276,20 +307,24 @@
         <div class="lightbox-content">
             <span class="lightbox-close" id="lightboxClose">&times;</span>
             <button class="lightbox-nav lightbox-prev" id="lightboxPrev">&#10094;</button>
-            <img class="lightbox-img" id="lightboxImg" src="" alt="">
+            
+            <div class="lightbox-img-container">
+                <div class="loading-spinner" id="loadingSpinner"></div>
+                <img class="lightbox-img" id="lightboxImg" src="" alt="">
+            </div>
+            
             <button class="lightbox-nav lightbox-next" id="lightboxNext">&#10095;</button>
             <div class="lightbox-counter" id="lightboxCounter"></div>
+            <div class="lightbox-description" id="lightboxDescription"></div>
         </div>
     </div>
 
     <script>
-        // 照片数据 - 这里应该是/gallery路径下的照片
-        // 您可以根据需要修改这个列表
-        // 注意：我们使用thumb字段存储压缩后的预览图，src字段存储原始高清图
+        // 照片数据
         const photos = [
             {
                 src: 'gallery/20240504.jpg',
-                thumb: 'gallery/thumbs/20240504_thumb.jpg', // 压缩后的预览图路径
+                thumb: 'gallery/thumbs/20240504_thumb.jpg',
                 title: '2024年5月4日',
                 description: '2024年5月，我们在广州的游船上在一起了。'
             },
@@ -365,7 +400,7 @@
                 photoItem.setAttribute('data-index', index);
                 
                 // 使用压缩后的预览图
-                const thumbSrc = photo.thumb || photo.src; // 如果没有缩略图，使用原图
+                const thumbSrc = photo.thumb || photo.src;
                 
                 photoItem.innerHTML = `
                     <img src="${thumbSrc}" alt="${photo.title}" class="compressed-img" loading="lazy">
@@ -396,6 +431,8 @@
             const lightboxPrev = document.getElementById('lightboxPrev');
             const lightboxNext = document.getElementById('lightboxNext');
             const lightboxCounter = document.getElementById('lightboxCounter');
+            const lightboxDescription = document.getElementById('lightboxDescription');
+            const loadingSpinner = document.getElementById('loadingSpinner');
             
             let currentIndex = 0;
             
@@ -404,7 +441,7 @@
                 currentIndex = index;
                 updateLightbox();
                 lightbox.classList.add('active');
-                document.body.style.overflow = 'hidden'; // 防止背景滚动
+                document.body.style.overflow = 'hidden';
             }
             
             // 关闭灯箱
@@ -416,10 +453,31 @@
             // 更新灯箱内容
             function updateLightbox() {
                 const photo = photos[currentIndex];
-                // 灯箱中显示原始高清图
-                lightboxImg.src = photo.src;
+                
+                // 显示加载指示器
+                loadingSpinner.style.display = 'block';
+                lightboxImg.classList.add('loading');
+                
+                // 先显示预览图
+                lightboxImg.src = photo.thumb || photo.src;
                 lightboxImg.alt = photo.title;
                 lightboxCounter.textContent = `${currentIndex + 1} / ${photos.length}`;
+                lightboxDescription.textContent = photo.description;
+                
+                // 预加载原图
+                const fullImage = new Image();
+                fullImage.onload = function() {
+                    // 原图加载完成后替换
+                    lightboxImg.src = photo.src;
+                    lightboxImg.classList.remove('loading');
+                    loadingSpinner.style.display = 'none';
+                };
+                fullImage.onerror = function() {
+                    // 如果原图加载失败，保持预览图显示
+                    lightboxImg.classList.remove('loading');
+                    loadingSpinner.style.display = 'none';
+                };
+                fullImage.src = photo.src;
             }
             
             // 上一张
