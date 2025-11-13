@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我们的照片集</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #1a2b4c;
+            color: #f0f0f0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ffb6c1;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #b0c4de;
+        }
+        
+        .photo-stream {
+            columns: 4 250px;
+            column-gap: 15px;
+            padding: 20px 0;
+        }
+        
+        .photo-item {
+            break-inside: avoid;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #2a3b5c;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        
+        .photo-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s;
+        }
+        
+        .photo-info {
+            padding: 10px;
+            font-size: 0.9rem;
+            color: #b0c4de;
+        }
+        
+        /* 灯箱样式 */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lightbox.active {
+            display: flex;
+        }
+        
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 2.5rem;
+            color: white;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+            z-index: 1001;
+        }
+        
+        .lightbox-close:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s;
+            z-index: 1001;
+        }
+        
+        .lightbox-nav:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        .lightbox-prev {
+            left: 30px;
+        }
+        
+        .lightbox-next {
+            right: 30px;
+        }
+        
+        .lightbox-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            color: #b0c4de;
+            font-size: 0.9rem;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            background: #ffb6c1;
+            color: #1a2b4c;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #ff9eb5;
+            transform: translateY(-2px);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .photo-stream {
+                columns: 2 150px;
+            }
+            
+            .lightbox-nav {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .lightbox-prev {
+                left: 10px;
+            }
+            
+            .lightbox-next {
+                right: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 图片压缩样式 - 控制预览图尺寸 */
+        .compressed-img {
+            max-width: 100%;
+            height: auto;
+            /* 添加模糊效果作为占位符，直到图片加载完成 */
+            filter: blur(5px);
+            transition: filter 0.5s;
+        }
+        
+        .compressed-img.loaded {
+            filter: blur(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>我们的照片集</h1>
+            <p class="subtitle">记录我们共同走过的每一个美好瞬间</p>
+        </header>
+        
+        <div class="photo-stream" id="photoStream">
+            <!-- 照片将通过JavaScript动态生成 -->
+        </div>
+        
+        <footer>
+            <p>每一张照片都是我们美好回忆的见证</p>
+            <a href="index.html" class="back-btn">返回纪念主页</a>
+        </footer>
+    </div>
+    
+    <!-- 灯箱结构 -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <span class="lightbox-close" id="lightboxClose">&times;</span>
+            <button class="lightbox-nav lightbox-prev" id="lightboxPrev">&#10094;</button>
+            <img class="lightbox-img" id="lightboxImg" src="" alt="">
+            <button class="lightbox-nav lightbox-next" id="lightboxNext">&#10095;</button>
+            <div class="lightbox-counter" id="lightboxCounter"></div>
+        </div>
+    </div>
+
+    <script>
+        // 照片数据 - 这里应该是/gallery路径下的照片
+        // 您可以根据需要修改这个列表
+        // 注意：我们使用thumb字段存储压缩后的预览图，src字段存储原始高清图
+        const photos = [
+            {
+                src: 'gallery/20240504.jpg',
+                thumb: 'gallery/thumbs/20240504_thumb.jpg', // 压缩后的预览图路径
+                title: '2024年5月4日',
+                description: '2024年5月，我们在广州的游船上在一起了。'
+            },
+            {
+                src: 'gallery/20240611.jpg',
+                thumb: 'gallery/thumbs/20240611_thumb.jpg',
+                title: '2024年6月1日',
+                description: '2024年6月1日，我们在巍山的咖啡店，老板送了我们明信片。'
+            },
+            {
+                src: 'gallery/20240811.jpg',
+                thumb: 'gallery/thumbs/20240811_thumb.jpg',
+                title: '2024年8月11日',
+                description: '2024年8月11日，七夕节，我们订了小狗蛋糕。'
+            },
+            {
+                src: 'gallery/20241001.jpg',
+                thumb: 'gallery/thumbs/20241001_thumb.jpg',
+                title: '2024年10月1日',
+                description: '2024年10月1日，我们在阳朔。'
+            },
+            {
+                src: 'gallery/20241003.jpg',
+                thumb: 'gallery/thumbs/20241003_thumb.jpg',
+                title: '2024年10月3日',
+                description: '2024年10月3日，我们在涠洲岛一起看日落。'
+            },
+            {
+                src: 'gallery/20250201.jpg',
+                thumb: 'gallery/thumbs/20250201_thumb.jpg',
+                title: '2025年2月1日',
+                description: '2025年2月1日，我们在成都。'
+            },
+            {
+                src: 'gallery/20250404.jpg',
+                thumb: 'gallery/thumbs/20250404_thumb.jpg',
+                title: '2025年4月4日',
+                description: '2025年4月4日，我们在大理看海。'
+            },
+            {
+                src: 'gallery/20250502.jpg',
+                thumb: 'gallery/thumbs/20250502_thumb.jpg',
+                title: '2025年5月2日',
+                description: '2025年5月2日，我们在香格里拉。'
+            },
+            {
+                src: 'gallery/20250519.jpg',
+                thumb: 'gallery/thumbs/20250519_thumb.jpg',
+                title: '2025年5月20日',
+                description: '2025年5月20日，我们一起过了520。'
+            },
+            {
+                src: 'gallery/20250611.jpg',
+                thumb: 'gallery/thumbs/20250611_thumb.jpg',
+                title: '2025年6月11日',
+                description: '2025年6月11日，我们在巍山。'
+            },
+            {
+                src: 'gallery/20251007.jpg',
+                thumb: 'gallery/thumbs/20251007_thumb.jpg',
+                title: '2025年10月7日',
+                description: '2025年10月7日，我们在弥勒。'
+            }
+        ];
+        
+        // 生成照片流
+        function generatePhotoStream() {
+            const photoStream = document.getElementById('photoStream');
+            
+            photos.forEach((photo, index) => {
+                const photoItem = document.createElement('div');
+                photoItem.className = 'photo-item';
+                photoItem.setAttribute('data-index', index);
+                
+                // 使用压缩后的预览图
+                const thumbSrc = photo.thumb || photo.src; // 如果没有缩略图，使用原图
+                
+                photoItem.innerHTML = `
+                    <img src="${thumbSrc}" alt="${photo.title}" class="compressed-img" loading="lazy">
+                    <div class="photo-info">
+                        <div>${photo.title}</div>
+                    </div>
+                `;
+                
+                photoStream.appendChild(photoItem);
+                
+                // 图片加载完成后移除模糊效果
+                const img = photoItem.querySelector('img');
+                if (img.complete) {
+                    img.classList.add('loaded');
+                } else {
+                    img.addEventListener('load', function() {
+                        this.classList.add('loaded');
+                    });
+                }
+            });
+        }
+        
+        // 灯箱功能
+        function initLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const lightboxClose = document.getElementById('lightboxClose');
+            const lightboxPrev = document.getElementById('lightboxPrev');
+            const lightboxNext = document.getElementById('lightboxNext');
+            const lightboxCounter = document.getElementById('lightboxCounter');
+            
+            let currentIndex = 0;
+            
+            // 打开灯箱
+            function openLightbox(index) {
+                currentIndex = index;
+                updateLightbox();
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden'; // 防止背景滚动
+            }
+            
+            // 关闭灯箱
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+            
+            // 更新灯箱内容
+            function updateLightbox() {
+                const photo = photos[currentIndex];
+                // 灯箱中显示原始高清图
+                lightboxImg.src = photo.src;
+                lightboxImg.alt = photo.title;
+                lightboxCounter.textContent = `${currentIndex + 1} / ${photos.length}`;
+            }
+            
+            // 上一张
+            function prevPhoto() {
+                currentIndex = (currentIndex - 1 + photos.length) % photos.length;
+                updateLightbox();
+            }
+            
+            // 下一张
+            function nextPhoto() {
+                currentIndex = (currentIndex + 1) % photos.length;
+                updateLightbox();
+            }
+            
+            // 点击图片打开灯箱
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.photo-item')) {
+                    const photoItem = e.target.closest('.photo-item');
+                    const index = parseInt(photoItem.getAttribute('data-index'));
+                    openLightbox(index);
+                }
+            });
+            
+            // 事件监听
+            lightboxClose.addEventListener('click', closeLightbox);
+            lightboxPrev.addEventListener('click', prevPhoto);
+            lightboxNext.addEventListener('click', nextPhoto);
+            
+            // 点击灯箱背景关闭
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) {
+                    closeLightbox();
+                }
+            });
+            
+            // 键盘导航
+            document.addEventListener('keydown', (e) => {
+                if (!lightbox.classList.contains('active')) return;
+                
+                switch(e.key) {
+                    case 'Escape':
+                        closeLightbox();
+                        break;
+                    case 'ArrowLeft':
+                        prevPhoto();
+                        break;
+                    case 'ArrowRight':
+                        nextPhoto();
+                        break;
+                }
+            });
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            generatePhotoStream();
+            initLightbox();
+        });
+    </script>
+</body>
+</html>
