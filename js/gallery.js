@@ -1,77 +1,9 @@
-// 照片配置数据 - 直接嵌入脚本中
-const PHOTOS = [
-    {
-        "src": "https://files.240503.xyz/gallery/20240504.jpg",
-        "thumb": "https://files.240503.xyz/gallery/thumbs/20240504_thumb.jpg",
-        "title": "2024年5月4日",
-        "description": "2024年5月，我们在广州的游船上在一起了。"
-    },
-    {
-        "src": "https://files.240503.xyz/gallery/20240611.jpg",
-        "thumb": "https://files.240503.xyz/gallery/thumbs/20240611_thumb.jpg",
-        "title": "2024年6月1日",
-        "description": "2024年6月1日，我们在巍山的咖啡店，老板送了我们明信片。"
-    },
-    {
-        "src": "https://files.240503.xyz/gallery/20240811.jpg",
-        "thumb": "https://files.240503.xyz/gallery/thumbs/20240811_thumb.jpg",
-        "title": "2024年8月11日",
-        "description": "2024年8月11日，七夕节，我们订了小狗蛋糕。"
-    },
-    {
-        "src": "https://files.240503.xyz/gallery/20241001.jpg",
-        "thumb": "https://files.240503.xyz/gallery/thumbs/20241001_thumb.jpg",
-        "title": "2024年10月1日",
-        "description": "2024年10月1日，我们在阳朔。"
-    },
-    {
-        "src": "https://files.240503.xyz/gallery/20241003.jpg",
-        "thumb": "https://files.240503.xyz/gallery/thumbs/20241003_thumb.jpg",
-        "title": "2024年10月3日",
-        "description": "2024年10月3日，我们在涠洲岛一起看日落。"
-    },
-    {
-        "src": "https://files.240503.xyz/gallery/20250201.jpg",
-        "thumb": "https://files.240503.xyz/gallery/thumbs/20250201_thumb.jpg",
-        "title": "2025年2月1日",
-        "description": "2025年2月1日，我们在成都。"
-    },
-    {
-        "src": "https://files.240503.xyz/gallery/20250404.jpg",
-        "thumb": "https://files.240503.xyz/gallery/thumbs/20250404_thumb.jpg",
-        "title": "2025年4月4日",
-        "description": "2025年4月4日，我们在大理看海。"
-    },
-    {
-        "src": "https://files.240503.xyz/gallery/20250502.jpg",
-        "thumb": "https://files.240503.xyz/gallery/thumbs/20250502_thumb.jpg",
-        "title": "2025年5月2日",
-        "description": "2025年5月2日，我们在香格里拉。"
-    },
-    {
-        "src": "https://files.240503.xyz/gallery/20250519.jpg",
-        "thumb": "https://files.240503.xyz/gallery/thumbs/20250519_thumb.jpg",
-        "title": "2025年5月20日",
-        "description": "2025年5月20日，我们一起过了520。"
-    },
-    {
-        "src": "https://files.240503.xyz/gallery/20250611.jpg",
-        "thumb": "https://files.240503.xyz/gallery/thumbs/20250611_thumb.jpg",
-        "title": "2025年6月11日",
-        "description": "2025年6月11日，我们在巍山。"
-    },
-    {
-        "src": "https://files.240503.xyz/gallery/20251007.jpg",
-        "thumb": "https://files.240503.xyz/gallery/thumbs/20251007_thumb.jpg",
-        "title": "2025年10月7日",
-        "description": "2025年10月7日，我们在弥勒。"
-    }
-];
-
 // 预加载图片缓存
 const imageCache = new Map();
 // 存储重定向后的最终URL
 const finalUrlCache = new Map();
+// 存储灯箱中已加载的图片URL
+const lightboxLoadedImages = new Map();
 
 // 获取重定向后的最终URL
 async function getFinalUrl(url) {
@@ -113,11 +45,19 @@ async function preloadImage(src) {
     });
 }
 
-// 加载照片配置 - 直接返回内嵌数据
-function loadPhotosConfig() {
-    return new Promise((resolve) => {
-        resolve(PHOTOS);
-    });
+// 加载照片配置 - 从外部配置文件加载
+async function loadPhotosConfig() {
+    try {
+        const response = await fetch('/config/photos.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const config = await response.json();
+        return config.photos;
+    } catch (error) {
+        console.error('Failed to load photos config:', error);
+        throw error;
+    }
 }
 
 // 解析所有照片URL，获取最终地址
@@ -229,22 +169,43 @@ function initLightbox(photos) {
         const loadIndex = currentIndex;
         currentLoadIndex = loadIndex;
         
-        const thumbFinalUrl = await getFinalUrl(photo.thumb || photo.src);
-        lightboxImg.src = thumbFinalUrl;
-        lightboxImg.alt = photo.title;
-        lightboxCounter.textContent = `${currentIndex + 1} / ${photos.length}`;
-        lightboxDescription.textContent = photo.description;
-        
         const finalSrc = await getFinalUrl(photo.src);
-        if (imageCache.has(finalSrc)) {
+        
+        // 检查图片是否已经在灯箱中加载过
+        if (lightboxLoadedImages.has(finalSrc)) {
+            // 如果已经加载过，直接使用缓存的Image对象
+            const cachedImg = lightboxLoadedImages.get(finalSrc);
             if (currentLoadIndex === loadIndex) {
-                lightboxImg.src = finalSrc;
+                lightboxImg.src = cachedImg.src;
+                lightboxImg.alt = photo.title;
+                lightboxCounter.textContent = `${currentIndex + 1} / ${photos.length}`;
+                lightboxDescription.textContent = photo.description;
+            }
+            return;
+        }
+        
+        const thumbFinalUrl = await getFinalUrl(photo.thumb || photo.src);
+        if (currentLoadIndex === loadIndex) {
+            lightboxImg.src = thumbFinalUrl;
+            lightboxImg.alt = photo.title;
+            lightboxCounter.textContent = `${currentIndex + 1} / ${photos.length}`;
+            lightboxDescription.textContent = photo.description;
+        }
+        
+        if (imageCache.has(finalSrc)) {
+            // 如果图片已经在预加载缓存中
+            const cachedImg = imageCache.get(finalSrc);
+            if (currentLoadIndex === loadIndex) {
+                lightboxImg.src = cachedImg.src;
+                lightboxLoadedImages.set(finalSrc, cachedImg);
             }
         } else {
+            // 预加载原图
             preloadImage(photo.src)
-                .then(() => {
+                .then((img) => {
                     if (currentLoadIndex === loadIndex) {
-                        lightboxImg.src = finalSrc;
+                        lightboxImg.src = img.src;
+                        lightboxLoadedImages.set(finalSrc, img);
                     }
                 })
                 .catch(() => {
