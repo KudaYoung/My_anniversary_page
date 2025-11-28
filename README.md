@@ -43,13 +43,13 @@ open index.html
 
 ## 📸 添加你的照片
 
-在`js/script.js`中找到`photos`数组，按照示例格式添加你的纪念照片：
+在`config/photos.json`中找到`photos`数组，按照示例格式添加你的纪念照片：
 ```javascript
 {
-    year: 2025,
-    date: '2025年5月3日',
-    image: 'path/to/your/photo.jpg',
-    description: '你的美好回忆描述'
+      "src": "path/to/your/photo.jpg",
+      "thumb": "path/to/your/photo_thumb.jpg",
+      "title": "2024年5月4日",
+      "description": "你的美好回忆描述"
 }
 ```
 ## 🤔 为什么选择AI开发？
