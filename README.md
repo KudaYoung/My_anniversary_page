@@ -43,7 +43,7 @@ open index.html
 
 ## 📸 添加你的照片
 
-在`config/photos.json`中找到`photos`数组，按照示例格式添加你的纪念照片：
+在`js/gallery.js`中找到`loadPhotosConfig`函数，按照示例格式添加你的纪念照片：
 ```javascript
 {
       "src": "path/to/your/photo.jpg",
