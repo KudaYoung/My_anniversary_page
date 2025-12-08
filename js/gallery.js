@@ -45,33 +45,76 @@ async function preloadImage(src) {
     });
 }
 
-// 加载照片配置 - 从外部配置文件加载
-import { photosData } from 'config/photos-data.js';
-
-document.addEventListener('DOMContentLoaded', async function() {
-    showResolvingStatus();
-    
-    try {
-        console.log('开始初始化画廊...');
-        console.log('照片数量:', photosData.length);
-        
-        await generatePhotoStream(photosData);
-        initLightbox(photosData);
-        
-        console.log('画廊初始化完成');
-    } catch (error) {
-        console.error('初始化画廊失败:', error);
-        
-        const photoStream = document.getElementById('photoStream');
-        photoStream.innerHTML = `
-            <div style="text-align: center; color: #ff6b6b; padding: 40px;">
-                <p>加载失败</p>
-                <p style="font-size: 0.9rem; margin-top: 10px;">错误: ${error.message}</p>
-                <button onclick="location.reload()" style="margin-top: 15px; padding: 8px 16px; background: #ff6b6b; color: white; border: none; border-radius: 4px; cursor: pointer;">重新加载</button>
-            </div>
-        `;
-    }
-});
+async function loadPhotosConfig() {
+        return [
+        {
+            "src": "https://files.240503.xyz/gallery/20240504.jpg",
+            "thumb": "https://files.240503.xyz/gallery/thumbs/20240504_thumb.jpg",
+            "title": "2024年5月4日",
+            "description": "2024年5月，我们在广州的游船上在一起了。"
+        },
+        {
+            "src": "https://files.240503.xyz/gallery/20240611.jpg",
+            "thumb": "https://files.240503.xyz/gallery/thumbs/20240611_thumb.jpg",
+            "title": "2024年6月1日",
+            "description": "2024年6月1日，我们在巍山的咖啡店，老板送了我们明信片。"
+        },
+        {
+            "src": "https://files.240503.xyz/gallery/20240811.jpg",
+            "thumb": "https://files.240503.xyz/gallery/thumbs/20240811_thumb.jpg",
+            "title": "2024年8月11日",
+            "description": "2024年8月11日，七夕节，我们订了小狗蛋糕。"
+        },
+        {
+            "src": "https://files.240503.xyz/gallery/20241001.jpg",
+            "thumb": "https://files.240503.xyz/gallery/thumbs/20241001_thumb.jpg",
+            "title": "2024年10月1日",
+            "description": "2024年10月1日，我们在阳朔。"
+        },
+        {
+            "src": "https://files.240503.xyz/gallery/20241003.jpg",
+            "thumb": "https://files.240503.xyz/gallery/thumbs/20241003_thumb.jpg",
+            "title": "2024年10月3日",
+            "description": "2024年10月3日，我们在涠涠洲岛一起看日落。"
+        },
+        {
+            "src": "https://files.240503.xyz/gallery/20250201.jpg",
+            "thumb": "https://files.240503.xyz/gallery/thumbs/20250201_thumb.jpg",
+            "title": "2025年2月1日",
+            "description": "2025年2月1日，我们在成都。"
+        },
+        {
+            "src": "https://files.240503.xyz/gallery/20250404.jpg",
+            "thumb": "https://files.240503.xyz/gallery/thumbs/20250404_thumb.jpg",
+            "title": "2025年4月4日",
+            "description": "2025年4月4日，我们在大理看海。"
+        },
+        {
+            "src": "https://files.240503.xyz/gallery/20250502.jpg",
+            "thumb": "https://files.240503.xyz/gallery/thumbs/20250502_thumb.jpg",
+            "title": "2025年5月2日",
+            "description": "2025年5月2日，我们在香格里拉。"
+        },
+        {
+            "src": "https://files.240503.xyz/gallery/20250519.jpg",
+            "thumb": "https://files.240503.xyz/gallery/thumbs/20250519_thumb.jpg",
+            "title": "2025年5月20日",
+            "description": "2025年5月20日，我们一起过了520。"
+        },
+        {
+            "src": "https://files.240503.xyz/gallery/20250611.jpg",
+            "thumb": "https://files.240503.xyz/gallery/thumbs/20250611_thumb.jpg",
+            "title": "2025年6月11日",
+            "description": "2025年6月11日，我们在巍山。"
+        },
+        {
+            "src": "https://files.240503.xyz/gallery/20251007.jpg",
+            "thumb": "https://files.240503.xyz/gallery/thumbs/20251007_thumb.jpg",
+            "title": "2025年10月7日",
+            "description": "2025年10月7日，我们在弥勒。"
+        }
+    ];
+}
 
 // 解析所有照片URL，获取最终地址
 async function resolveAllPhotoUrls(photos) {
