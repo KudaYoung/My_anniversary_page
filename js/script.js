@@ -3,7 +3,7 @@ const photos = [
     {
         year: 2025,
         date: '2025年5月3日',
-        image: 'https://img.scdn.io/i/694bb590f221d_1766569360.webp',
+        image: 'https://free.picui.cn/free/2025/12/24/694bb5fc7481f.jpg',
         description: '一周年纪念，我们的第一张红底合照'
     }
     // 后续年份的照片可以在这里添加
