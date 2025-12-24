@@ -1,9 +1,22 @@
-// 预加载图片缓存
-const imageCache = new Map();
-// 存储重定向后的最终URL
+// 存储重定向后的最终URL (用于缩略图和原图)
 const finalUrlCache = new Map();
-// 存储灯箱中已加载的图片URL
-const lightboxLoadedImages = new Map();
+// 存储已经完全加载的高清原图 (避免重复加载)
+const fullImageCache = new Map();
+// 存储已解析的缩略图URL映射 (确保网格显示无误)
+const thumbUrlMap = new Map();
+
+// 注入CSS样式以支持模糊过渡效果
+const style = document.createElement('style');
+style.textContent = `
+    #lightboxImg {
+        transition: filter 0.3s ease-out;
+    }
+    #lightboxImg.blur-loading {
+        filter: blur(10px); /* 模糊程度 */
+        transform: scale(1);
+    }
+`;
+document.head.appendChild(style);
 
 // 获取重定向后的最终URL
 async function getFinalUrl(url) {
@@ -26,107 +39,85 @@ async function getFinalUrl(url) {
     }
 }
 
-// 预加载图片函数
-async function preloadImage(src) {
-    const finalSrc = await getFinalUrl(src);
-    
-    if (imageCache.has(finalSrc)) {
-        return imageCache.get(finalSrc);
-    }
-    
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => {
-            imageCache.set(finalSrc, img);
-            resolve(img);
-        };
-        img.onerror = reject;
-        img.src = finalSrc;
-    });
-}
-
 async function loadPhotosConfig() {
         return [
         {
-            "src": "https://files.240503.xyz/gallery/20240504.jpg",
-            "thumb": "https://files.240503.xyz/gallery/thumbs/20240504_thumb.jpg",
+            "src": "https://free.picui.cn/free/2025/12/24/694bb5fe761bd.jpg",
+            "thumb": "https://picui.cn/thumbnails/aac9de9d92376d459bf796b9ad6ec75d.png",
             "title": "2024年5月4日",
             "description": "2024年5月，我们在广州的游船上在一起了。"
         },
         {
-            "src": "https://files.240503.xyz/gallery/20240611.jpg",
-            "thumb": "https://files.240503.xyz/gallery/thumbs/20240611_thumb.jpg",
+            "src": "https://free.picui.cn/free/2025/12/24/694bb5fe14820.jpg",
+            "thumb": "https://picui.cn/thumbnails/cebf9f6b9a372ba829c2c2c3404f5702.png",
             "title": "2024年6月1日",
             "description": "2024年6月1日，我们在巍山的咖啡店，老板送了我们明信片。"
         },
         {
-            "src": "https://files.240503.xyz/gallery/20240811.jpg",
-            "thumb": "https://files.240503.xyz/gallery/thumbs/20240811_thumb.jpg",
+            "src": "https://free.picui.cn/free/2025/12/24/694bb5fdd135b.jpg",
+            "thumb": "https://picui.cn/thumbnails/cce24d111482e65aa9c91b2386f9051c.png",
             "title": "2024年8月11日",
             "description": "2024年8月11日，七夕节，我们订了小狗蛋糕。"
         },
         {
-            "src": "https://files.240503.xyz/gallery/20241001.jpg",
-            "thumb": "https://files.240503.xyz/gallery/thumbs/20241001_thumb.jpg",
+            "src": "https://free.picui.cn/free/2025/12/24/694bb5fe05323.jpg",
+            "thumb": "https://picui.cn/thumbnails/3e11ac3553d056e724338be0c43ef5c0.png",
             "title": "2024年10月1日",
             "description": "2024年10月1日，我们在阳朔。"
         },
         {
-            "src": "https://files.240503.xyz/gallery/20241003.jpg",
-            "thumb": "https://files.240503.xyz/gallery/thumbs/20241003_thumb.jpg",
+            "src": "https://free.picui.cn/free/2025/12/24/694bb601d6080.jpg",
+            "thumb": "https://picui.cn/thumbnails/230a47e21e6a0209e6bcde59986a41db.png",
             "title": "2024年10月3日",
             "description": "2024年10月3日，我们在涠涠洲岛一起看日落。"
         },
         {
-            "src": "https://files.240503.xyz/gallery/20250201.jpg",
-            "thumb": "https://files.240503.xyz/gallery/thumbs/20250201_thumb.jpg",
+            "src": "https://free.picui.cn/free/2025/12/24/694bb6055681d.jpg",
+            "thumb": "https://picui.cn/thumbnails/16551a1aed45a2674da5e54ca01d449e.png",
             "title": "2025年2月1日",
             "description": "2025年2月1日，我们在成都。"
         },
         {
-            "src": "https://files.240503.xyz/gallery/20250404.jpg",
-            "thumb": "https://files.240503.xyz/gallery/thumbs/20250404_thumb.jpg",
+            "src": "https://free.picui.cn/free/2025/12/24/694bb6054c56a.jpg",
+            "thumb": "https://picui.cn/thumbnails/989e3e79be4703134594cf4623eb229c.png",
             "title": "2025年4月4日",
             "description": "2025年4月4日，我们在大理看海。"
         },
         {
-            "src": "https://files.240503.xyz/gallery/20250502.jpg",
-            "thumb": "https://files.240503.xyz/gallery/thumbs/20250502_thumb.jpg",
+            "src": "https://free.picui.cn/free/2025/12/24/694bb6094118f.jpg",
+            "thumb": "https://picui.cn/thumbnails/e109caa833921f71b51ce90b2523df78.png",
             "title": "2025年5月2日",
             "description": "2025年5月2日，我们在香格里拉。"
         },
         {
-            "src": "https://files.240503.xyz/gallery/20250519.jpg",
-            "thumb": "https://files.240503.xyz/gallery/thumbs/20250519_thumb.jpg",
+            "src": "https://free.picui.cn/free/2025/12/24/694bb612cf24d.jpg",
+            "thumb": "https://picui.cn/thumbnails/cc13e3659bc2faa081767362c8260d95.png",
             "title": "2025年5月20日",
             "description": "2025年5月20日，我们一起过了520。"
         },
         {
-            "src": "https://files.240503.xyz/gallery/20250611.jpg",
-            "thumb": "https://files.240503.xyz/gallery/thumbs/20250611_thumb.jpg",
+            "src": "https://free.picui.cn/free/2025/12/24/694bb6131e83b.jpg",
+            "thumb": "https://picui.cn/thumbnails/43722d9106316568cd5c14972def98c9.png",
             "title": "2025年6月11日",
             "description": "2025年6月11日，我们在巍山。"
         },
         {
-            "src": "https://files.240503.xyz/gallery/20251007.jpg",
-            "thumb": "https://files.240503.xyz/gallery/thumbs/20251007_thumb.jpg",
+            "src": "https://free.picui.cn/free/2025/12/24/694bb61432146.jpg",
+            "thumb": "https://picui.cn/thumbnails/03af2fc8afbc6c65590a4c174c1064a8.png",
             "title": "2025年10月7日",
             "description": "2025年10月7日，我们在弥勒。"
         }
     ];
 }
 
-// 解析所有照片URL，获取最终地址
-async function resolveAllPhotoUrls(photos) {
-    const allUrls = [];
+// 只解析缩略图的URL，原图等点开再解析，加快首屏速度
+async function resolveThumbnailUrls(photos) {
+    const thumbUrls = [];
     photos.forEach(photo => {
-        allUrls.push(photo.src);
-        if (photo.thumb) {
-            allUrls.push(photo.thumb);
-        }
+        if (photo.thumb) thumbUrls.push(photo.thumb);
     });
     
-    const uniqueUrls = [...new Set(allUrls)];
+    const uniqueUrls = [...new Set(thumbUrls)];
     
     const urlPromises = uniqueUrls.map(async url => {
         const finalUrl = await getFinalUrl(url);
@@ -135,23 +126,16 @@ async function resolveAllPhotoUrls(photos) {
     
     const resolvedUrls = await Promise.allSettled(urlPromises);
     
-    const urlMap = new Map();
     resolvedUrls.forEach(result => {
         if (result.status === 'fulfilled') {
-            urlMap.set(result.value.original, result.value.final);
+            thumbUrlMap.set(result.value.original, result.value.final);
         }
     });
     
-    const resolvedPhotos = photos.map(photo => ({
-        ...photo,
-        src: urlMap.get(photo.src) || photo.src,
-        thumb: photo.thumb ? (urlMap.get(photo.thumb) || photo.thumb) : undefined
-    }));
-    
-    return resolvedPhotos;
+    return photos; // 返回原始数据，缩略图通过 map 获取
 }
 
-// 生成照片流
+// 生成照片流（网格显示）
 async function generatePhotoStream(photos) {
     const photoStream = document.getElementById('photoStream');
     photoStream.innerHTML = '';
@@ -161,14 +145,16 @@ async function generatePhotoStream(photos) {
         return;
     }
     
-    const resolvedPhotos = await resolveAllPhotoUrls(photos);
+    // 先解析缩略图
+    await resolveThumbnailUrls(photos);
     
-    resolvedPhotos.forEach((photo, index) => {
+    photos.forEach((photo, index) => {
         const photoItem = document.createElement('div');
         photoItem.className = 'photo-item';
         photoItem.setAttribute('data-index', index);
         
-        const thumbSrc = photo.thumb || photo.src;
+        // 从Map中获取解析后的缩略图地址，如果没有则用原始地址
+        const thumbSrc = thumbUrlMap.get(photo.thumb) || photo.thumb;
         
         photoItem.innerHTML = `
             <img src="${thumbSrc}" alt="${photo.title}" class="compressed-img" loading="lazy">
@@ -187,10 +173,6 @@ async function generatePhotoStream(photos) {
                 this.classList.add('loaded');
             });
         }
-        
-        preloadImage(photo.src).catch(() => {
-            console.warn(`Failed to preload image: ${photo.src}`);
-        });
     });
 }
 
@@ -205,68 +187,68 @@ function initLightbox(photos) {
     const lightboxDescription = document.getElementById('lightboxDescription');
     
     let currentIndex = 0;
-    let currentLoadIndex = null;
+    let loadGeneration = 0; // 用于处理快速翻页时的竞态条件
 
     async function openLightbox(index) {
         currentIndex = index;
-        await updateLightbox();
         lightbox.classList.add('active');
         document.body.style.overflow = 'hidden';
+        await updateLightbox();
     }
 
     function closeLightbox() {
         lightbox.classList.remove('active');
         document.body.style.overflow = 'auto';
-        currentLoadIndex = null;
     }
 
     async function updateLightbox() {
         const photo = photos[currentIndex];
-        const loadIndex = currentIndex;
-        currentLoadIndex = loadIndex;
+        const currentGen = ++loadGeneration; // 标记当前的加载请求
         
-        const finalSrc = await getFinalUrl(photo.src);
-        
-        // 检查图片是否已经在灯箱中加载过
-        if (lightboxLoadedImages.has(finalSrc)) {
-            // 如果已经加载过，直接使用缓存的Image对象
-            const cachedImg = lightboxLoadedImages.get(finalSrc);
-            if (currentLoadIndex === loadIndex) {
-                lightboxImg.src = cachedImg.src;
-                lightboxImg.alt = photo.title;
-                lightboxCounter.textContent = `${currentIndex + 1} / ${photos.length}`;
-                lightboxDescription.textContent = photo.description;
-            }
+        // 更新文字信息
+        lightboxCounter.textContent = `${currentIndex + 1} / ${photos.length}`;
+        lightboxDescription.textContent = photo.description;
+        lightboxImg.alt = photo.title;
+
+        // 1. 检查是否有已加载的高清原图缓存
+        if (fullImageCache.has(photo.src)) {
+            const cachedImg = fullImageCache.get(photo.src);
+            lightboxImg.src = cachedImg.src;
+            lightboxImg.classList.remove('blur-loading'); // 移除模糊
             return;
         }
-        
-        const thumbFinalUrl = await getFinalUrl(photo.thumb || photo.src);
-        if (currentLoadIndex === loadIndex) {
-            lightboxImg.src = thumbFinalUrl;
-            lightboxImg.alt = photo.title;
-            lightboxCounter.textContent = `${currentIndex + 1} / ${photos.length}`;
-            lightboxDescription.textContent = photo.description;
-        }
-        
-        if (imageCache.has(finalSrc)) {
-            // 如果图片已经在预加载缓存中
-            const cachedImg = imageCache.get(finalSrc);
-            if (currentLoadIndex === loadIndex) {
-                lightboxImg.src = cachedImg.src;
-                lightboxLoadedImages.set(finalSrc, cachedImg);
-            }
-        } else {
-            // 预加载原图
-            preloadImage(photo.src)
-                .then((img) => {
-                    if (currentLoadIndex === loadIndex) {
-                        lightboxImg.src = img.src;
-                        lightboxLoadedImages.set(finalSrc, img);
-                    }
-                })
-                .catch(() => {
-                    console.warn(`Failed to load full image: ${photo.src}`);
-                });
+
+        // 2. 如果没有缓存，先显示缩略图（带模糊效果）
+        const thumbSrc = thumbUrlMap.get(photo.thumb) || photo.thumb;
+        lightboxImg.classList.add('blur-loading'); // 添加模糊类
+        lightboxImg.src = thumbSrc; // 立即显示缩略图
+
+        // 3. 后台解析并加载高清原图
+        try {
+            // 获取原图的最终重定向地址
+            const finalFullSrc = await getFinalUrl(photo.src);
+            
+            // 创建新的图片对象加载原图
+            const fullImg = new Image();
+            
+            fullImg.onload = () => {
+                // 只有当用户还停留在当前图片时，才替换为原图
+                if (currentGen === loadGeneration) {
+                    lightboxImg.src = finalFullSrc;
+                    lightboxImg.classList.remove('blur-loading'); // 清除模糊，显示高清图
+                }
+                // 存入缓存，下次不再加载
+                fullImageCache.set(photo.src, fullImg);
+            };
+            
+            fullImg.onerror = () => {
+                console.warn(`Failed to load full image: ${photo.src}`);
+            };
+            
+            fullImg.src = finalFullSrc; // 开始下载原图
+
+        } catch (error) {
+            console.error("Error loading full image:", error);
         }
     }
 
@@ -315,17 +297,11 @@ function initLightbox(photos) {
     });
 }
 
-function showLoading() {
-    const photoStream = document.getElementById('photoStream');
-    photoStream.innerHTML = '<p style="text-align: center; color: #b0c4de; padding: 40px;">加载中...</p>';
-}
-
 function showResolvingStatus() {
     const photoStream = document.getElementById('photoStream');
     photoStream.innerHTML = `
         <div style="text-align: center; color: #b0c4de; padding: 40px;">
-            <p>正在解析图片地址...</p>
-            <p style="font-size: 0.9rem; margin-top: 10px;">这可能需要几秒钟时间</p>
+            <p>正在加载相册...</p>
         </div>
     `;
 }
