@@ -5,15 +5,43 @@ const fullImageCache = new Map();
 // 存储已解析的缩略图URL映射 (确保网格显示无误)
 const thumbUrlMap = new Map();
 
-// 注入CSS样式以支持模糊过渡效果
+// 注入CSS样式
+// 修改点：增加了 loading-tip 样式，以及 img 的 object-fit 属性确保大小一致
 const style = document.createElement('style');
 style.textContent = `
+    /* 灯箱图片容器样式 */
     #lightboxImg {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* 关键：让缩略图和原图都自适应填满容器，保持大小一致 */
         transition: filter 0.3s ease-out;
+        display: block;
     }
+    
+    /* 模糊状态 */
     #lightboxImg.blur-loading {
-        filter: blur(10px); /* 模糊程度 */
-        transform: scale(1);
+        filter: blur(15px); /* 加大模糊程度，减少马赛克感 */
+    }
+
+    /* 加载提示文字样式 */
+    .loading-tip {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 14px;
+        pointer-events: none; /* 防止遮挡点击 */
+        z-index: 100;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .loading-tip.show {
+        opacity: 1;
     }
 `;
 document.head.appendChild(style);
@@ -110,7 +138,7 @@ async function loadPhotosConfig() {
     ];
 }
 
-// 只解析缩略图的URL，原图等点开再解析，加快首屏速度
+// 预解析缩略图URL
 async function resolveThumbnailUrls(photos) {
     const thumbUrls = [];
     photos.forEach(photo => {
@@ -132,10 +160,10 @@ async function resolveThumbnailUrls(photos) {
         }
     });
     
-    return photos; // 返回原始数据，缩略图通过 map 获取
+    return photos;
 }
 
-// 生成照片流（网格显示）
+// 生成照片流
 async function generatePhotoStream(photos) {
     const photoStream = document.getElementById('photoStream');
     photoStream.innerHTML = '';
@@ -145,7 +173,6 @@ async function generatePhotoStream(photos) {
         return;
     }
     
-    // 先解析缩略图
     await resolveThumbnailUrls(photos);
     
     photos.forEach((photo, index) => {
@@ -153,7 +180,6 @@ async function generatePhotoStream(photos) {
         photoItem.className = 'photo-item';
         photoItem.setAttribute('data-index', index);
         
-        // 从Map中获取解析后的缩略图地址，如果没有则用原始地址
         const thumbSrc = thumbUrlMap.get(photo.thumb) || photo.thumb;
         
         photoItem.innerHTML = `
@@ -176,7 +202,7 @@ async function generatePhotoStream(photos) {
     });
 }
 
-// 灯箱功能
+// 灯箱功能初始化
 function initLightbox(photos) {
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightboxImg');
@@ -186,8 +212,23 @@ function initLightbox(photos) {
     const lightboxCounter = document.getElementById('lightboxCounter');
     const lightboxDescription = document.getElementById('lightboxDescription');
     
+    // 动态创建加载提示元素并添加到灯箱中
+    let loadingTip = document.querySelector('.loading-tip');
+    if (!loadingTip) {
+        loadingTip = document.createElement('div');
+        loadingTip.className = 'loading-tip';
+        loadingTip.innerText = '正在加载原图，请稍后...';
+        // 将提示插入到图片容器附近，确保在图片上方显示
+        // 假设 lightboxImg 的父级是容器，如果不是，可能需要根据你的HTML结构调整
+        if(lightboxImg.parentNode) {
+            lightboxImg.parentNode.appendChild(loadingTip);
+        } else {
+            lightbox.appendChild(loadingTip);
+        }
+    }
+
     let currentIndex = 0;
-    let loadGeneration = 0; // 用于处理快速翻页时的竞态条件
+    let loadGeneration = 0; // 用于处理并发加载
 
     async function openLightbox(index) {
         currentIndex = index;
@@ -203,9 +244,9 @@ function initLightbox(photos) {
 
     async function updateLightbox() {
         const photo = photos[currentIndex];
-        const currentGen = ++loadGeneration; // 标记当前的加载请求
+        const currentGen = ++loadGeneration;
         
-        // 更新文字信息
+        // 更新基本信息
         lightboxCounter.textContent = `${currentIndex + 1} / ${photos.length}`;
         lightboxDescription.textContent = photo.description;
         lightboxImg.alt = photo.title;
@@ -215,40 +256,49 @@ function initLightbox(photos) {
             const cachedImg = fullImageCache.get(photo.src);
             lightboxImg.src = cachedImg.src;
             lightboxImg.classList.remove('blur-loading'); // 移除模糊
+            loadingTip.classList.remove('show'); // 隐藏提示
             return;
         }
 
         // 2. 如果没有缓存，先显示缩略图（带模糊效果）
         const thumbSrc = thumbUrlMap.get(photo.thumb) || photo.thumb;
-        lightboxImg.classList.add('blur-loading'); // 添加模糊类
-        lightboxImg.src = thumbSrc; // 立即显示缩略图
+        
+        // 先设置模糊和缩略图，并显示提示
+        lightboxImg.classList.add('blur-loading');
+        loadingTip.classList.add('show');
+        
+        // 由于CSS中设置了 object-fit: contain，缩略图会被拉伸到和原图一样大的显示区域
+        lightboxImg.src = thumbSrc; 
 
         // 3. 后台解析并加载高清原图
         try {
-            // 获取原图的最终重定向地址
             const finalFullSrc = await getFinalUrl(photo.src);
-            
-            // 创建新的图片对象加载原图
             const fullImg = new Image();
             
             fullImg.onload = () => {
-                // 只有当用户还停留在当前图片时，才替换为原图
+                // 只有当用户还停留在当前图片时，才执行替换
                 if (currentGen === loadGeneration) {
                     lightboxImg.src = finalFullSrc;
-                    lightboxImg.classList.remove('blur-loading'); // 清除模糊，显示高清图
+                    lightboxImg.classList.remove('blur-loading'); // 清除模糊
+                    loadingTip.classList.remove('show'); // 隐藏提示
                 }
-                // 存入缓存，下次不再加载
                 fullImageCache.set(photo.src, fullImg);
             };
             
             fullImg.onerror = () => {
                 console.warn(`Failed to load full image: ${photo.src}`);
+                if (currentGen === loadGeneration) {
+                     loadingTip.innerText = '加载失败';
+                     // 即使失败，也移除模糊让用户至少能看清缩略图
+                     lightboxImg.classList.remove('blur-loading'); 
+                }
             };
             
-            fullImg.src = finalFullSrc; // 开始下载原图
+            fullImg.src = finalFullSrc;
 
         } catch (error) {
             console.error("Error loading full image:", error);
+            loadingTip.classList.remove('show');
         }
     }
 
