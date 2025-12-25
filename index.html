@@ -3,61 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我们的周年纪念</title>
+    <title>Our Anniversary | 我们的纪念日</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <!-- 网站图标 -->
-        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjZjIwZjBmIiBkPSJNMTIgNC41OTVhNS45IDUuOSAwIDAgMC0zLjk5Ni0xLjU1OGE1Ljk0IDUuOTQgMCAwIDAtNC4yMTMgMS43NThjLTIuMzUzIDIuMzYzLTIuMzUyIDYuMDU5LjAwMiA4LjQxMmw3LjMzMiA3LjMzMmMuMTcuMjk5LjQ5OC40OTIuODc1LjQ5MmEuOTkuOTkgMCAwIDAgLjc5Mi0uNDA5bDcuNDE1LTcuNDE1YzIuMzU0LTIuMzU0IDIuMzU0LTYuMDQ5LS4wMDItOC40MTZhNS45NCA1Ljk0IDAgMCAwLTQuMjA5LTEuNzU0QTUuOSA1LjkgMCAwIDAgMTIgNC41OTVtNi43OTEgMS42MWMxLjU2MyAxLjU3MSAxLjU2NCA0LjAyNS4wMDIgNS41ODhMMTIgMTguNTg2bC02Ljc5My02Ljc5M2MtMS41NjItMS41NjMtMS41NjEtNC4wMTcuMDAyLTUuNTg0Yy43Ni0uNzU2IDEuNzU0LTEuMTcyIDIuNzk5LTEuMTcyczIuMDM1LjQxNiAyLjc4OSAxLjE3bC41LjVhMSAxIDAgMCAwIDEuNDE0IDBsLjUtLjVjMS41MTItMS41MDkgNC4wNzQtMS41MDUgNS41ODQtLjAwMiIvPjwvc3ZnPg==">
-    <!-- 备用图标格式（可选） -->
-    <link rel="alternate icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjZjIwZjBmIiBkPSJNMTIgNC41OTVhNS45IDUuOSAwIDAgMC0zLjk5Ni0xLjU1OGE1Ljk0IDUuOTQgMCAwIDAtNC4yMTMgMS43NThjLTIuMzUzIDIuMzYzLTIuMzUyIDYuMDU5LjAwMiA8LjQxMmw3LjMzMiA3LjMzMmMuMTcuMjk5LjQ5OC40OTIuODc1LjQ5MmEuOTkuOTkgMCAwIDAgLjc5Mi0uNDA5bDcuNDE1LTcuNDE1YzIuMzU0LTIuMzU0IDIuMzU0LTYuMDQ5LS4wMDItOC40MTZhNS45NCA1Ljk0IDwgMCAwLTQuMjA5LTEuNzU0QTUuOSA1LjkgMCAwIDAgMTIgNC41OTVtNi43OTEgMS42MWMxLjU2MyAxLjU3MSAxLjU2NCA0LjAyNS4wMDIgNS41ODhMMTIgMTguNTg2bC02Ljc5My02Ljc5M2MtMS41NjItMS41NjMtMS41NjEtNC4wMTcuMDAyLTUuNTg0Yy43Ni0uNzU2IDEuNzU0LTEuMTcyIDIuNzk5LTEuMTcyczIuMDM1LjQxNiAyLjc4OSAxLjE3bC41LjVhMSAxIDAgMCAwIDEuNDE0IDBsLjUtLjVjMS41MTItMS41MDkgNC4wNzQtMS41MDUgNS41ODQtLjAwMiIvPjwvc3ZnPg=">
-    <meta name="theme-color" content="#d23669">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjRTg4RDY3IiBkPSJNMTIgNC41OTVhNS45IDUuOSAwIDAgMC0zLjk5Ni0xLjU1OGE1Ljk0IDUuOTQgMCAwIDAtNC4yMTMgMS43NThjLTIuMzUzIDIuMzYzLTIuMzUyIDYuMDU5LjAwMiA4LjQxMmw3LjMzMiA3LjMzMmMuMTcuMjk5LjQ5OC40OTIuODc1LjQ5MmEuOTkuOTkgMCAwIDAgLjc5Mi0uNDA5bDcuNDE1LTcuNDE1YzIuMzU0LTIuMzU0IDIuMzU0LTYuMDQ5LS4wMDItOC40MTZhNS45NCA1Ljk0IDAgMCAwLTQuMjA5LTEuNzU0QTUuOSA1LjkgMCAwIDAgMTIgNC41OTV6Ii8+PC9zdmc+">
+    <meta name="theme-color" content="#fdfbf7">
 </head>
 <body>
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+
     <div class="container">
-        <header>
-            <h1>我们的周年纪念</h1>
-            <p class="subtitle">从相遇的那一天起，每一天都值得纪念</p>
-            <p class="love-date">2024年5月3日 - 我们在一起的日子</p>
+        <header class="fade-in">
+            <div class="header-card">
+                <h1 class="handwriting">我们的纪念日</h1>
+                <p class="subtitle">斯人若彩虹，遇上方知有</p>
+                <div class="date-tag">
+                    <span id="start-date-display">Computing...</span>
+                </div>
+            </div>
         </header>
         
-        <section class="counter-section">
-            <h2>我们已经在一起</h2>
-            <div class="days-counter" id="days-counter">计算中...</div>
-            <p class="counter-label">每一天都因你而变得特别</p>
+        <section class="counter-section fade-in">
+            <p class="counter-label">我们已经相爱了</p>
+            <div class="days-wrapper">
+                <span class="days-number" id="days-counter">0</span>
+                <span class="days-unit">天</span>
+            </div>
+            <p class="counter-footer">每一秒都值得被记录</p>
         </section>
         
         <section class="timeline-section">
-            <h2 class="section-title">我们的纪念照片</h2>
+            <h2 class="section-title handwriting fade-in">时光相册</h2>
             <div class="timeline" id="timeline">
-                <!-- 时间轴内容将通过JavaScript动态生成 -->
-            </div>
+                </div>
             
-            <div class="more-photos-section">
-                <p>这里记录了我们每年的纪念照片</p>
-                <a href="gallery" class="more-btn">查看更多照片</a>
+            <div class="more-photos-section fade-in">
+                <p>未完待续...</p>
+                <a href="gallery" class="more-btn">查看更多回忆 <span class="arrow">→</span></a>
             </div>
         </section>
         
-        <footer>
-            <p class="footer-content">
-                anniversary.240503.xyz @<span id="current-year"></span>
+        <footer class="fade-in">
+            <p>
+                Love & Memory @ <span id="current-year"></span>
                 <br>
                 <a href="https://github.com/KudaYoung" target="_blank" class="github-link">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik04IDBjNC40MiAwIDggMy41OCA4IDhhOC4wMSA4LjAxIDAgMCAxLTUuNDUgNy41OWMtLjQuMDgtLjU1LS4xNy0uNTUtLjM4YzAtLjI3LjAxLTEuMTMuMDEtMi4yYzAtLjc1LS4yNS0xLjIzLS41NC0xLjQ4YzEuNzgtLjIgMy42NS0uODggMy42NS0zLjk1YzAtLjg4LS4zMS0xLjU5LS44Mi0yLjE1Yy4wOC0uMi4zNi0xLjAyLS4wOC0yLjEyYzAgMC0uNjctLjIyLTIuMi44MmMtLjY0LS4xOC0xLjMyLS4yNy0yLS4yN3MtMS4zNi4wOS0yIC4yN2MtMS41My0xLjAzLTIuMi0uODItMi4yLS44MmMtLjQ0IDEuMS0uMTYgMS45Mi0uMDggMi4xMmMtLjUxLjU2LS44MiAxLjI4LS44MiAyLjE1YzAgMy4wNiAxLjg2IDMuNzUgMy42NCAzLjk1Yy0uMjMuMi0uNDQuNTUtLjUxIDEuMDdjLS40Ni4yMS0xLjYxLjU1LTIuMzMtLjY2Yy0uMTUtLjI0LS42LS44My0xLjIzLS44MmMtLjY3LjAxLS4yNy4zOC4wMS41M2MuMzQuMTkuNzMuOS44MiAxLjEzYy4xNi40NS42OCAxLjMxIDIuNjkuOTRjMCAuNjcuMDEgMS4zLjAxIDEuNDljMCAuMjEtLjE1LjQ1LS41NS4zOEE3Ljk5NSA3Ljk5NSAwIDAgMSAwIDhjMC00LjQyIDMuNTgtOCA4LTgiLz48L3N2Zz4=" alt="GitHub" class="github-icon">
-                    @KudaYoung
+                    Designed by KudaYoung
                 </a>
             </p>
         </footer>
     </div>
 
     <script src="js/script.js"></script>
-    <script>
-        // 设置当前年份
-        document.addEventListener('DOMContentLoaded', function() {
-            const yearSpan = document.getElementById('current-year');
-            if (yearSpan) {
-                yearSpan.textContent = new Date().getFullYear();
-            }
-        });
-    </script>
 </body>
 </html>

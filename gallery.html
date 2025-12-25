@@ -3,53 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 网站图标 -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjZjIwZjBmIiBkPSJNMTIgNC41OTVhNS45IDUuOSAwIDAgMC0zLjk5Ni0xLjU1OGE1Ljk0IDUuOTQgMCAwIDAtNC4yMTMgMS43NThjLTIuMzUzIDIuMzYzLTIuMzUyIDYuMDU5LjAwMiA4LjQxMmw3LjMzMiA3LjMzMmMuMTcuMjk5LjQ5OC40OTIuODc1LjQ5MmEuOTkuOTkgMCAwIDAgLjc5Mi0uNDA5bDcuNDE1LTcuNDE1YzIuMzU0LTIuMzU0IDIuMzU0LTYuMDQ5LS4wMDItOC40MTZhNS45NCA1Ljk0IDAgMCAwLTQuMjA5LTEuNzU0QTUuOSA1LjkgMCAwIDAgMTIgNC41OTVtNi43OTEgMS42MWMxLjU2MyAxLjU3MSAxLjU2NCA0LjAyNS4wMDIgNS41ODhMMTIgMTguNTg2bC02Ljc5My02Ljc5M2MtMS41NjItMS41NjMtMS41NjEtNC4wMTcuMDAyLTUuNTg0Yy43Ni0uNzU2IDEuNzU0LTEuMTcyIDIuNzk5LTEuMTcyczIuMDM1LjQxNiAyLjc4OSAxLjE3bC41LjVhMSAxIDAgMCAwIDEuNDE0IDBsLjUtLjVjMS41MTItMS41MDkgNC4wNzQtMS41MDUgNS41ODQtLjAwMiIvPjwvc3ZnPg==">
+    <title>Our Gallery | 我们的相册</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- 备用图标格式（可选） -->
-    <link rel="alternate icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjZjIwZjBmIiBkPSJNMTIgNC41OTVhNS45IDUuOSAwIDAgMC0zLjk5Ni0xLjU1OGE1Ljk0IDUuOTQgMCAwIDAtNC4yMTMgMS43NThjLTIuMzUzIDIuMzYzLTIuMzUyIDYuMDU5LjAwMiA4LjQxMmw3LjMzMiA3LjMzMmMuMTcuMjk5LjQ5OC40OTIuODc1LjQ5MmEuOTkuOTkgMCAwIDAgLjc5Mi0uNDA5bDcuNDE1LTcuNDE1YzIuMzU0LTIuMzU0IDIuMzU0LTYuMDQ5LS4wMDItOC40MTZhNS45NCA1Ljk0IDAgMCAwLTQuMjA5LTEuNzU0QTUuOSA1LjkgMCAwIDAgMTIgNC41OTVtNi43OTEgMS42MWMxLjU2MyAxLjU3MSAxLjU2NCA0LjAyNS4wMDIgNS41ODhMMTIgMTguNTg2bC02Ljc5My02Ljc5M2MtMS41NjItMS41NjMtMS41NjEtNC4wMTcuMDAyLTUuNTg0Yy43Ni0uNzU2IDEuNzU0LTEuMTcyIDIuNzk5LTEuMTcyczIuMDM1LjQxNiAyLjc4OSAxLjE3bC41LjVhMSAxIDAgMCAwIDEuNDE0IDBsLjUtLjVjMS41MTItMS41MDkgNC4wNzQtMS41MDUgNS41ODQtLjAwMiIvPjwvc3ZnPg==">
-    
-    <!-- Apple设备支持 -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjZjIwZjBmIiBkPSJNMTIgNC41OTVhNS45IDUuOSAwIDAgMC0zLjk5Ni0xLjU1OGE1Ljk0IDUuOTQgMCAwIDAtNC4yMTMgMS43NThjLTIuMzUzIDIuMzYzLTIuMzUyIDYuMDU5LjAwMiA4LjQxMmw3LjMzMiA3LjMzMmMuMTcuMjk5LjQ5OC40OTIuODc1LjQ5MmEuOTkuOTkgMCAwIDAgLjc5Mi0uNDA5bDcuNDE1LTcuNDE1YzIuMzU0LTIuMzU0IDIuMzU0LTYuMDQ5LS4wMDItOC40MTZhNS45NCA1Ljk0IDAgMCAwLTQuMjA5LTEuNzU0QTUuOSA1LjkgMCAwIDAgMTIgNC41OTVtNi43OTEgMS42MWMxLjU2MyAxLjU3MSAxLjU2NCA0LjAyNS4wMDIgNS41ODhMMTIgMTguNTg2bC02Ljc5My02Ljc5M2MtMS41NjItMS41NjMtMS41NjEtNC4wMTcuMDAyLTUuNTg0Yy43Ni0uNzU2IDEuNzU0LTEuMTcyIDIuNzk5LTEuMTcyczIuMDM1LjQxNiAyLjc4OSAxLjE3bC41LjVhMSAxIDAgMCAwIDEuNDE0IDBsLjUtLjVjMS41MTItMS41MDkgNC4wNzQtMS41MDUgNS41ODQtLjAwMiIvPjwvc3ZnPg==">
-    
-    <!-- 主题颜色 -->
-    <meta name="theme-color" content="#d23669">
-    <title>我们的照片集</title>
-    <link rel="stylesheet" href="/css/gallery.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjRTg4RDY3IiBkPSJNMTIgNC41OTVhNS45IDUuOSAwIDAgMC0zLjk5Ni0xLjU1OGE1Ljk0IDUuOTQgMCAwIDAtNC4yMTMgMS43NThjLTIuMzUzIDIuMzYzLTIuMzUyIDYuMDU5LjAwMiA4LjQxMmw3LjMzMiA3LjMzMmMuMTcuMjk5LjQ5OC40OTIuODc1LjQ5MmEuOTkuOTkgMCAwIDAgLjc5Mi0uNDA5bDcuNDE1LTcuNDE1YzIuMzU0LTIuMzU0IDIuMzU0LTYuMDQ5LS4wMDItOC40MTZhNS45NCA1Ljk0IDAgMCAwLTQuMjA5LTEuNzU0QTUuOSA1LjkgMCAwIDAgMTIgNC41OTV6Ii8+PC9zdmc+">
+    <meta name="theme-color" content="#fdfbf7">
+    <link rel="stylesheet" href="css/gallery.css">
 </head>
 <body>
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+
     <div class="container">
-        <header>
-            <h1>我们的照片集</h1>
+        <header class="fade-in">
+            <h1 class="handwriting">我们的照片集</h1>
             <p class="subtitle">记录我们共同走过的每一个美好瞬间</p>
+            <a href="/" class="back-link">← 返回纪念主页</a>
         </header>
         
         <div class="photo-stream" id="photoStream">
-            <!-- 照片将通过JavaScript动态生成 -->
+            <div class="loading-placeholder">
+                <div class="spinner"></div>
+                <p>正在冲洗照片...</p>
+            </div>
         </div>
         
-        <footer>
-            <p>每一张照片都是我们美好回忆的见证</p>
-            <a href="/" class="back-btn">返回纪念主页</a>
+        <footer class="fade-in">
+            <p>每一张照片都是时光的标本</p>
         </footer>
     </div>
     
-    <!-- 灯箱结构 -->
     <div class="lightbox" id="lightbox">
+        <img class="lightbox-backdrop-img" id="lightboxBackdrop" src="" alt="">
+        <div class="lightbox-overlay"></div>
+
         <div class="lightbox-content">
             <span class="lightbox-close" id="lightboxClose">&times;</span>
             <button class="lightbox-nav lightbox-prev" id="lightboxPrev">&#10094;</button>
             
-            <div class="lightbox-img-container">
+            <div class="lightbox-img-wrapper">
                 <img class="lightbox-img" id="lightboxImg" src="" alt="">
+                <div class="lightbox-loader" id="lightboxLoader">
+                    <div class="loader-spinner"></div>
+                    <span>原图加载中...</span>
+                </div>
             </div>
             
             <button class="lightbox-nav lightbox-next" id="lightboxNext">&#10095;</button>
-            <div class="lightbox-counter" id="lightboxCounter"></div>
-            <div class="lightbox-description" id="lightboxDescription"></div>
+            
+            <div class="lightbox-info">
+                <div class="lightbox-counter" id="lightboxCounter">1 / 10</div>
+                <h3 id="lightboxTitle" class="handwriting"></h3>
+                <div class="lightbox-description" id="lightboxDescription"></div>
+            </div>
         </div>
     </div>
 
-    <script src="/js/gallery.js"></script>
+    <script src="js/gallery.js"></script>
 </body>
 </html>
