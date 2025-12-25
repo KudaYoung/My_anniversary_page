@@ -70,68 +70,68 @@ async function getFinalUrl(url) {
 async function loadPhotosConfig() {
         return [
         {
-            "src": "https://free.picui.cn/free/2025/12/24/694bb5fe761bd.jpg",
-            "thumb": "https://picui.cn/thumbnails/aac9de9d92376d459bf796b9ad6ec75d.png",
+            "src": "https://free.picui.cn/free/2025/12/25/694c9abb0f558.jpg",
+            "thumb": "https://picui.cn/thumbnails/034da131b0b1d92f26f7c376873ea6c9.png",
             "title": "2024年5月4日",
             "description": "2024年5月，我们在广州的游船上在一起了。"
         },
         {
-            "src": "https://free.picui.cn/free/2025/12/24/694bb5fe14820.jpg",
-            "thumb": "https://picui.cn/thumbnails/cebf9f6b9a372ba829c2c2c3404f5702.png",
+            "src": "https://free.picui.cn/free/2025/12/25/694c9b04ad89e.jpg",
+            "thumb": "https://picui.cn/thumbnails/6d2cdf57c0c40261a26480b39907f61f.png",
             "title": "2024年6月1日",
             "description": "2024年6月1日，我们在巍山的咖啡店，老板送了我们明信片。"
         },
         {
-            "src": "https://free.picui.cn/free/2025/12/24/694bb5fdd135b.jpg",
-            "thumb": "https://picui.cn/thumbnails/cce24d111482e65aa9c91b2386f9051c.png",
+            "src": "https://free.picui.cn/free/2025/12/25/694c9b6379815.jpg",
+            "thumb": "https://picui.cn/thumbnails/106a9b78de17ef2c1af8871a71e4cc4e.png",
             "title": "2024年8月11日",
             "description": "2024年8月11日，七夕节，我们订了小狗蛋糕。"
         },
         {
-            "src": "https://free.picui.cn/free/2025/12/24/694bb5fe05323.jpg",
-            "thumb": "https://picui.cn/thumbnails/3e11ac3553d056e724338be0c43ef5c0.png",
+            "src": "https://free.picui.cn/free/2025/12/25/694c9b634c34e.jpg",
+            "thumb": "https://picui.cn/thumbnails/c12ee4b7cf42237a856168ac91e42c30.png",
             "title": "2024年10月1日",
             "description": "2024年10月1日，我们在阳朔。"
         },
         {
-            "src": "https://free.picui.cn/free/2025/12/24/694bb601d6080.jpg",
+            "src": "https://free.picui.cn/free/2025/12/25/694c9baeba014.jpg",
             "thumb": "https://picui.cn/thumbnails/230a47e21e6a0209e6bcde59986a41db.png",
             "title": "2024年10月3日",
             "description": "2024年10月3日，我们在涠涠洲岛一起看日落。"
         },
         {
-            "src": "https://free.picui.cn/free/2025/12/24/694bb6055681d.jpg",
-            "thumb": "https://picui.cn/thumbnails/16551a1aed45a2674da5e54ca01d449e.png",
+            "src": "https://free.picui.cn/free/2025/12/25/694c9b63630b3.jpg",
+            "thumb": "https://picui.cn/thumbnails/69fa4b572198077d29591420b745c8d0.png",
             "title": "2025年2月1日",
             "description": "2025年2月1日，我们在成都。"
         },
         {
-            "src": "https://free.picui.cn/free/2025/12/24/694bb6054c56a.jpg",
-            "thumb": "https://picui.cn/thumbnails/989e3e79be4703134594cf4623eb229c.png",
+            "src": "https://free.picui.cn/free/2025/12/25/694c9b6307714.jpg",
+            "thumb": "https://picui.cn/thumbnails/4951555c90bc3897523016bfcaa5405c.png",
             "title": "2025年4月4日",
             "description": "2025年4月4日，我们在大理看海。"
         },
         {
-            "src": "https://free.picui.cn/free/2025/12/24/694bb6094118f.jpg",
-            "thumb": "https://picui.cn/thumbnails/e109caa833921f71b51ce90b2523df78.png",
+            "src": "https://free.picui.cn/free/2025/12/25/694c9b63820d5.jpg",
+            "thumb": "https://picui.cn/thumbnails/efdccb5c6b0fa4210467c02d18e02a0b.png",
             "title": "2025年5月2日",
             "description": "2025年5月2日，我们在香格里拉。"
         },
         {
-            "src": "https://free.picui.cn/free/2025/12/24/694bb612cf24d.jpg",
-            "thumb": "https://picui.cn/thumbnails/cc13e3659bc2faa081767362c8260d95.png",
+            "src": "https://free.picui.cn/free/2025/12/25/694c9b7a2f4e7.jpg",
+            "thumb": "https://picui.cn/thumbnails/8ca4a0fdd50d98036638c04e25bdf20b.png",
             "title": "2025年5月20日",
             "description": "2025年5月20日，我们一起过了520。"
         },
         {
-            "src": "https://free.picui.cn/free/2025/12/24/694bb6131e83b.jpg",
-            "thumb": "https://picui.cn/thumbnails/43722d9106316568cd5c14972def98c9.png",
+            "src": "https://free.picui.cn/free/2025/12/25/694c9b77d50a3.jpg",
+            "thumb": "https://picui.cn/thumbnails/2d09df0833d0621fde5bc6bbb165bdc9.png",
             "title": "2025年6月11日",
             "description": "2025年6月11日，我们在巍山。"
         },
         {
-            "src": "https://free.picui.cn/free/2025/12/24/694bb61432146.jpg",
-            "thumb": "https://picui.cn/thumbnails/03af2fc8afbc6c65590a4c174c1064a8.png",
+            "src": "https://free.picui.cn/free/2025/12/25/694c9b7932dd0.jpg",
+            "thumb": "https://picui.cn/thumbnails/bc43caf9b436a2a69d8e15642dc97801.png",
             "title": "2025年10月7日",
             "description": "2025年10月7日，我们在弥勒。"
         }
