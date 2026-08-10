@@ -15,7 +15,7 @@ const photos = [
     {
         year: 2025,
         date: '2025年5月3日',
-        image: 'https://picui.cn/thumbnails/4c0fdee1b6103971ecb49c68be3a2eff.png',
+        image: 'https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEY4k9qeUUxf1HaiH-uG5SZhZ58gMUnsAACECsAAhVdyVduUbh48c710D0E.jpg',
         description: '一周年快乐！我们拍了第一张红底合照，希望未来每一年都有你的陪伴。'
     }
 ];
