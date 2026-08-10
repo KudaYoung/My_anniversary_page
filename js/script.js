@@ -17,6 +17,12 @@ const photos = [
         date: '2025年5月3日',
         image: 'https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEY4k9qeUUxf1HaiH-uG5SZhZ58gMUnsAACECsAAhVdyVduUbh48c710D0E.jpg',
         description: '一周年快乐！我们拍了第一张红底合照，希望未来每一年都有你的陪伴。'
+    },
+    {
+        year: 2026,
+        date: '2026年5月3日',
+        image: 'https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEY4oJqeUeCRx5bzzmsa1DNpjL5uMQwfgACRSsAAhVdyVdSFvupOmF0Tj0E.png',
+        description: '两周年啦！手里拿的是第一年的合照。'
     }
 ];
 
